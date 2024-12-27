@@ -2,3 +2,4 @@
 export { default as BallDisplay } from "./BallDisplay.svelte";
 export { default as BallHistory } from "./BallHistory.svelte";
 export { default as Controls } from "./Controls.svelte";
+export { default as RoundProgress } from "./RoundProgress.svelte";

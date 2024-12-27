@@ -1,4 +1,6 @@
 <script>
+  import { fly } from "$lib/transition.js";
+  import { quadIn, quadOut } from "svelte/easing";
   let { number } = $props();
 
   function letterFromNumber(number) {
@@ -19,33 +21,53 @@
 </script>
 
 <!--
-  +-----------+-----------+
-  |           |           |
-  |           |           |
-  |  letter   |  numbers  |
-  |           |           |
-  |           |           |
-  +-----------+-----------+
+  +--< outer >---------------------+------+
+  |+-< inner >--------------------+|      |
+  ||                              ||      |
+  ||     ball number display      ||      |
+  ||     (BallDisplay.svelte)     ||   <----- previous balls
+  ||                              ||      |   (BallDisplay.svelte)
+  |+------------------------------+|      |
+  ||      progress indicator      ||      |
+  |+------------------------------+|      |
+  ||  controls (Controls.svelte)  ||      |
+  |+------------------------------+|      |
+  +--------------------------------+------+
+
+  +--< outer > ---------------------------+
+  |+-< display; position: absolute >-----+|
+  ||                                     ||
+  ||                                     ||
+  ||                                     ||
+  |+-------------------------------------+|
+  +---------------------------------------+
 -->
 
 <style>
-  .outer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    column-gap: 10%;
+  .display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    z-index: -5; /* make sure the rolling numbers don't draw on top of any UI */
+    margin: 0;
+    display: inline-block;
+    font-size: 30vw; /* vw to make it big and scale responsively */
   }
 
-  .letter, .number {
-    font-size: 30vw; /* vw to make it big and scale responsively */
+  .outer {
+    position: relative;
+    align-self: stretch;
+    flex-grow: 8;
   }
 </style>
 
 <div class="outer">
-  <div class="letter">
-    {letterFromNumber(number)}
-  </div>
-  <div class="number">
-    {number}
-  </div>
+  {#key number}
+    <p class="display" in:fly={{ easing: quadIn, duration: 300, y: -400 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
+      {letterFromNumber(number)} {number}
+    </p>
+  {/key}
 </div>

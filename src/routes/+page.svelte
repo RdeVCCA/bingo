@@ -1,48 +1,47 @@
-<!--
-  +--< outer >----------------------------+
-  |+-< inner >--------------------+       |
-  ||                              |       |
-  ||     ball number display      |       |
-  ||     (BallDisplay.svelte)     |   <------ previous balls
-  ||                              |       |   (BallDisplay.svelte)
-  |+------------------------------+       |
-  ||  controls (Controls.svelte)  |       |
-  |+------------------------------+       |
-  +---------------------------------------+
--->
-
 <script>
   import {
     BallDisplay,
     BallHistory,
     Controls,
+    RoundProgress,
   } from "$lib/index.js";
 
-  /** Returns a new ball. This function WILL NOT modify the `unpicked` array */
-  function previewNewBall(unpicked) {
+  /**
+    * Returns a new ball. This function WILL NOT modify the `unpicked` array.
+    * If specified, the function will ensure the new ball is not the same as `prevPicked`.
+    */
+  function previewNewBall(unpicked, prevPicked) {
     let newBallIndex = Math.floor(Math.random() * unpicked.length);
+    if (prevPicked) {
+      while (unpicked.length > 1 && unpicked[newBallIndex] === prevPicked) {
+        newBallIndex = Math.floor(Math.random() * unpicked.length);
+      }
+    }
     return unpicked[newBallIndex];
   }
 
-  /** Returns a new ball. This function WILL modify the `unpicked` array */
+  /** Returns a new ball. This function WILL modify the `unpicked` array. */
   function pickNewBall(unpicked) {
     let newBallIndex = Math.floor(Math.random() * unpicked.length);
     let newBall = unpicked.splice(newBallIndex, 1)[0];
     return newBall;
   }
-  
-  let unpicked = $state(Array(75).fill().map((_, i) => i + 1));
-  let previewNumber = $state(1);
-  let soundEffect = new Audio("/saul.mp3");
-  soundEffect.loop = true;
 
+  // generate array with numbers from 1-75
+  let unpicked = $state(Array(75).fill().map((_, i) => i + 1));
+
+  let previewNumber = $state(1);
   let previewIntervalId;
+  let soundEffect = new Audio("/soundEffect.mp3");
+  soundEffect.loop = true;
   function onPlay() {
     if (unpicked.length === 0) { return; }
     soundEffect.play();
+
+    previewNumber = previewNewBall(unpicked, previewNumber);
     previewIntervalId = setInterval(function () {
-      previewNumber = previewNewBall(unpicked);
-    }, 50);
+      previewNumber = previewNewBall(unpicked, previewNumber);
+    }, 300);
   }
 
   function onPause() {
@@ -57,8 +56,22 @@
     unpicked = Array(75).fill().map((_, i) => i + 1);
     previewNumber = 1;
   }
-
 </script>
+
+<!--
+  +--< outer >---------------------+------+
+  |+-< inner >--------------------+|      |
+  ||                              ||      |
+  ||     ball number display      ||      |
+  ||     (BallDisplay.svelte)     ||   <----- previous balls
+  ||                              ||      |   (BallDisplay.svelte)
+  |+------------------------------+|      |
+  ||      progress indicator      ||      |
+  |+------------------------------+|      |
+  ||  controls (Controls.svelte)  ||      |
+  |+------------------------------+|      |
+  +--------------------------------+------+
+-->
 
 <style>
   .outer {
@@ -67,23 +80,24 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    flex-grow: 1;
   }
 
   .inner {
-    flex-grow: 5;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+    row-gap: 8px;
   }
 </style>
 
 <div class="outer">
   <div class="inner">
     <BallDisplay number={previewNumber} />
-    <Controls {onPlay} {onPause} {onNewRound} />
+    <RoundProgress rounds={75 - unpicked.length} />
+    <Controls {onPlay} {onPause} {onNewRound} roundEnded={unpicked.length === 0}/>
   </div>
-  <BallHistory unpicked={unpicked}/>
+  <BallHistory {unpicked} />
 </div>
 
