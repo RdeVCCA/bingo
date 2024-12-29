@@ -1,6 +1,7 @@
 <script>
   import {
     BallDisplay,
+    BallDisplay2,
     BallHistory,
     Controls,
     RoundProgress,
@@ -29,6 +30,7 @@
 
   // generate array with numbers from 1-75
   let unpicked = $state(Array(75).fill().map((_, i) => i + 1));
+  let picked = $state(null);
 
   let previewNumber = $state(1);
   let previewIntervalId;
@@ -49,7 +51,9 @@
     soundEffect.pause();
     soundEffect.currentTime = 0;
     clearInterval(previewIntervalId);
-    previewNumber = pickNewBall(unpicked);
+    let newNumber = pickNewBall(unpicked);
+    previewNumber = newNumber
+    picked = newNumber;
   }
 
   function onNewRound() {
@@ -94,7 +98,7 @@
 
 <div class="outer">
   <div class="inner">
-    <BallDisplay number={previewNumber} />
+    <BallDisplay {previewNumber} number={picked} />
     <RoundProgress rounds={75 - unpicked.length} />
     <Controls {onPlay} {onPause} {onNewRound} roundEnded={unpicked.length === 0}/>
   </div>

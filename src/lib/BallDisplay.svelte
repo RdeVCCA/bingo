@@ -1,7 +1,8 @@
 <script>
+  import { BingoCage } from "$lib/index.js";
   import { fly } from "$lib/transition.js";
   import { quadIn, quadOut } from "svelte/easing";
-  let { number } = $props();
+  let { number, previewNumber } = $props();
 
   function letterFromNumber(number) {
     if (number >= 1 && number <= 15) {
@@ -44,6 +45,20 @@
 -->
 
 <style>
+  .outer {
+    align-self: stretch;
+    flex-grow: 8;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    justify-content: space-around;
+  }
+
+  .display-container {
+    position: relative;
+    flex-grow: 1;
+  }
+
   .display {
     position: absolute;
     top: 50%;
@@ -54,20 +69,18 @@
     z-index: -5; /* make sure the rolling numbers don't draw on top of any UI */
     margin: 0;
     display: inline-block;
-    font-size: 30vw; /* vw to make it big and scale responsively */
+    font-size: 20vw; /* vw to make it big and scale responsively */
   }
 
-  .outer {
-    position: relative;
-    align-self: stretch;
-    flex-grow: 8;
-  }
 </style>
 
 <div class="outer">
-  {#key number}
-    <p class="display" in:fly={{ easing: quadIn, duration: 300, y: -400 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
-      {letterFromNumber(number)} {number}
-    </p>
-  {/key}
+  <div class="display-container">
+    {#key previewNumber}
+      <p class="display" in:fly={{ easing: quadIn, duration: 300, y: -400 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
+        {letterFromNumber(previewNumber)} {previewNumber}
+      </p>
+    {/key}
+  </div>
+  <BingoCage {number} />
 </div>
