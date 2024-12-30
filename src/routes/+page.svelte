@@ -1,10 +1,10 @@
 <script>
   import {
     BallDisplay,
-    BallDisplay2,
     BallHistory,
     Controls,
     RoundProgress,
+    BingoCage,
   } from "$lib/index.js";
 
   /**
@@ -30,7 +30,8 @@
 
   // generate array with numbers from 1-75
   let unpicked = $state(Array(75).fill().map((_, i) => i + 1));
-  let picked = $state(null);
+  // the bingo cage svg binds to this variable
+  let bingoCage;
 
   let previewNumber = $state(1);
   let previewIntervalId;
@@ -51,14 +52,14 @@
     soundEffect.pause();
     soundEffect.currentTime = 0;
     clearInterval(previewIntervalId);
-    let newNumber = pickNewBall(unpicked);
-    previewNumber = newNumber
-    picked = newNumber;
+    previewNumber = pickNewBall(unpicked);
+    bingoCage.removeBall();
   }
 
   function onNewRound() {
     unpicked = Array(75).fill().map((_, i) => i + 1);
     previewNumber = 1;
+    bingoCage.resetBalls();
   }
 </script>
 
@@ -83,7 +84,8 @@
     height: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-evenly;
+    column-gap: 8px;
   }
 
   .inner {
@@ -94,11 +96,23 @@
     align-items: center;
     row-gap: 8px;
   }
+
+  .display {
+    align-self: stretch;
+    flex-grow: 8;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    justify-content: space-around;
+  }
 </style>
 
 <div class="outer">
   <div class="inner">
-    <BallDisplay {previewNumber} number={picked} />
+    <div class="display">
+      <BallDisplay {previewNumber} />
+      <BingoCage bind:this={bingoCage} />
+    </div>
     <RoundProgress rounds={75 - unpicked.length} />
     <Controls {onPlay} {onPause} {onNewRound} roundEnded={unpicked.length === 0}/>
   </div>

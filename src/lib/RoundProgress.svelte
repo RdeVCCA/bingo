@@ -28,7 +28,7 @@
   .outer {
     background-color: white;
     border: 2px solid black;
-    width: 90%;
+    width: 100%;
     height: fit-content;
     position: relative;
   }

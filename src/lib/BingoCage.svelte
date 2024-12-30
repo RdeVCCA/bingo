@@ -1,7 +1,4 @@
 <script>
-  import { onMount } from "svelte";
-  let { number } = $props();
-  
   let lastBallDistance = [];
   function generateRandomPosition() {
     let selfRadius = 32;
@@ -50,29 +47,30 @@
   // sort positions so balls further away from the edge are removed first
   let positions = Array(75).fill().map(_ => generateRandomPosition()).sort((a, b) => a.distance - b.distance);
 
-  function removeBall() {
+  export function removeBall() {
     let ball = document.querySelector(".ball:not(.about-to-drop)");
-    ball.classList.add(".about-to-drop");
-    ball.addEventListener("animationiteration", (e) => {
-      ball.classList.remove("ball");
-      ball.classList.add("droppedBall");
-    });
+    ball.classList.add("about-to-drop");
+    let onIter;
+    onIter = () => {
+      ball.classList.remove("ball", 'about-to-drop');
+      ball.classList.add("dropped-ball");
+      ball.removeEventListener("animationiteration", onIter);
+    };
+    ball.addEventListener("animationiteration", onIter);
   }
 
-  onMount(() => {
-    $effect(() => {
-      // fake doing some stuff with number to get this to react when number changes
-      number;
-      removeBall();
-    });
-  })
+  export function resetBalls() {
+    for (let ball of document.querySelectorAll(".dropped-ball")) {
+      ball.classList.remove("dropped-ball");
+      ball.classList.add("ball");
+    }
+  }
 </script>
 
 <style>
   svg {
     min-width: 0;
     min-height: 0;
-    width: 40%;
   }
 
   @keyframes infiniteSpin {
@@ -81,7 +79,7 @@
   }
 
   .cage {
-    animation: infiniteSpin 2s infinite linear;
+    animation: infiniteSpin 1.7s infinite linear;
     transform-origin: 50% 50%;
     transform-box: fill-box;
   }
@@ -107,24 +105,6 @@
     */
     animation: ballAnim 0.793650s infinite linear;
     animation-delay: var(--ball-anim-stagger);
-  }
-
-  @keyframes droppedBallAnim {
-    0% {
-      cy: var(--ball-distance);
-    }
-    12% {
-      cy: 263px;
-    }
-    100% {
-      cx: -230px;
-      cy: 316px;
-      opacity: 0;
-    }
-  }
-  /* global because Svelte does not recognize styles added via JS */
-  :global(.droppedBall) {
-    animation: droppedBallAnim 3s 1 ease-in;
   }
 </style>
 

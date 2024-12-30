@@ -2,7 +2,7 @@
   import { BingoCage } from "$lib/index.js";
   import { fly } from "$lib/transition.js";
   import { quadIn, quadOut } from "svelte/easing";
-  let { number, previewNumber } = $props();
+  let { previewNumber } = $props();
 
   function letterFromNumber(number) {
     if (number >= 1 && number <= 15) {
@@ -35,28 +35,20 @@
   |+------------------------------+|      |
   +--------------------------------+------+
 
-  +--< outer > ---------------------------+
-  |+-< display; position: absolute >-----+|
-  ||                                     ||
-  ||                                     ||
-  ||                                     ||
-  |+-------------------------------------+|
-  +---------------------------------------+
+  +--< display-container >--------------+
+  |+-< display; position: absolute >---+|
+  ||                                   ||
+  ||                                   ||
+  ||                                   ||
+  |+-----------------------------------+|
+  +-------------------------------------+
 -->
 
 <style>
-  .outer {
-    align-self: stretch;
-    flex-grow: 8;
-    display: flex;
-    flex-direction: row;
-    column-gap: 20px;
-    justify-content: space-around;
-  }
-
   .display-container {
     position: relative;
-    flex-grow: 1;
+    flex-shrink: 0;
+    width: 60%;
   }
 
   .display {
@@ -74,13 +66,10 @@
 
 </style>
 
-<div class="outer">
-  <div class="display-container">
-    {#key previewNumber}
-      <p class="display" in:fly={{ easing: quadIn, duration: 300, y: -400 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
-        {letterFromNumber(previewNumber)} {previewNumber}
-      </p>
-    {/key}
-  </div>
-  <BingoCage {number} />
+<div class="display-container">
+  {#key previewNumber}
+    <p class="display" in:fly={{ easing: quadIn, duration: 300, y: -400 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
+      {letterFromNumber(previewNumber)} {previewNumber}
+    </p>
+  {/key}
 </div>
