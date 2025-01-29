@@ -62,7 +62,7 @@
 <style>
   .outer {
     flex-grow: 1;
-    max-height: 20vh;
+    max-height: 10vh;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -81,13 +81,21 @@
   }
 
   button:not([disabled]):hover {
-    background-color: #ccc;
+    filter: brightness(0.9);
+  }
+
+  .play {
+    background-color: #ff9aa2;
+  }
+
+  .pause {
+    background-color: #e2f0cb;
   }
 </style>
 
 <div class="outer">
   <!-- start/stop should be the same button -->
-  <button onclick={handlePlayPause} disabled="{roundEnded}" aria-label="Next number" title="Next number">
+  <button onclick={handlePlayPause} disabled="{roundEnded}" aria-label="Next number" title="Next number" class="{isPlaying ? 'play' : 'pause'}">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: {isPlaying ? 'none' : 'initial'}" aria-hidden="true">
       <path d="M8,5.14V19.14L19,12.14L8,5.14Z" />
     </svg>

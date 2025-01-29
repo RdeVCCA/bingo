@@ -57,10 +57,25 @@
     align-items: center;
     transition: background-color 0.5s;
   }
-  
-  div.filled {
-    background-color: #666;
-    color: white;
+
+  div:nth-child(5n+2).filled {
+    background-color: #ff9aa2;
+  }
+
+  div:nth-child(5n+3).filled {
+    background-color: #ffdac1;
+  }
+
+  div:nth-child(5n+4).filled {
+    background-color: #e2f0cb;
+  }
+
+  div:nth-child(5n).filled {
+    background-color: #b5ead7;
+  }
+
+  div:nth-child(5n+1).filled {
+    background-color: #c7ceea;
   }
 
   .outer {

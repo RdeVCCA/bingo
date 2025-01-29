@@ -44,6 +44,8 @@
     return { angleDisplacement, distance, stagger };
   }
 
+  let colors = ["#ff9aa2", "#ffb7b2", "#ffdac1", "#e2f0cb", "#b5ead7", "#c7ceea"]
+
   // sort positions so balls further away from the edge are removed first
   let positions = Array(75).fill().map(_ => generateRandomPosition()).sort((a, b) => a.distance - b.distance);
 
@@ -111,11 +113,11 @@
 <!-- generated from https://svgomg.net/ then tweaked slightly; original file included in source -->
 <svg viewBox="-264.9 -238.6 592.2 600.6" xmlns="http://www.w3.org/2000/svg" class="svg">
   <!-- this is the prototype ball, it's hidden behind the center of the cage -->
-  <g fill="#eee" stroke="#333" stroke-width="2" stroke-linecap="round">
+  <g stroke="#333" stroke-width="2" stroke-linecap="round">
     {#each Array(75).fill() as _, i}
       <!-- distance is a custom attribute and means nothing in SVG -->
       <circle r="30" class="ball"
-        style="--ball-id: {i}; --ball-anim-stagger: {positions[i].stagger}ms; --ball-distance: {positions[i].distance}px;"
+        style="--ball-id: {i}; --ball-anim-stagger: {positions[i].stagger}ms; --ball-distance: {positions[i].distance}px; fill: {colors[i % 6]}"
         distance={positions[i].distance}
       />
     {/each}

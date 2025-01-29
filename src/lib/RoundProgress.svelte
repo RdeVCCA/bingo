@@ -45,7 +45,7 @@
 
   .inner {
     border-right: 2px solid #aaa;
-    background-color: #eee;
+    background-color: #e2f0cb;
     position: absolute;
     top: 0;
     left: 0;

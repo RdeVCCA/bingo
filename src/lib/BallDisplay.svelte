@@ -19,16 +19,31 @@
       console.error(`letterFromNumber: number ${number} is not in the range 1-75`);
     }
   }
+
+  // let letterToColor = {
+  //   "B": "#660008",
+  //   "I": "#702d00",
+  //   "N": "#3f5619",
+  //   "G": "#17513c",
+  //   "O": "#1e274f",
+  // };
+  let letterToColor = {
+    "B": "#ff9aa2",
+    "I": "#ffdac1",
+    "N": "#e2f0cb",
+    "G": "#b5ead7",
+    "O": "#c7ceea",
+  }
 </script>
 
 <!--
   +--< outer >---------------------+------+
-  |+-< inner >--------------------+|      |
-  ||                              ||      |
-  ||     ball number display      ||      |
-  ||     (BallDisplay.svelte)     ||   <----- previous balls
-  ||                              ||      |   (BallDisplay.svelte)
-  |+------------------------------+|      |
+  |+-< inner >--------+-----------+|      |
+  ||                  |           ||      |
+  ||                  |           ||      |
+  ||    BallDisplay   | BingoCage ||   <----- previous balls
+  ||                  |           ||      |   (BallDisplay.svelte)
+  |+------------------+-----------+|      |
   ||      progress indicator      ||      |
   |+------------------------------+|      |
   ||  controls (Controls.svelte)  ||      |
@@ -52,6 +67,7 @@
   }
 
   .display {
+    color: #222;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -61,15 +77,23 @@
     z-index: -5; /* make sure the rolling numbers don't draw on top of any UI */
     margin: 0;
     display: inline-block;
-    font-size: 20vw; /* vw to make it big and scale responsively */
+    font-size: 15vw; /* vw to make it big and scale responsively */
   }
 
+  span {
+    font-family: monospace;
+  }
 </style>
 
 <div class="display-container">
   {#key previewNumber}
     <p class="display" in:fly={{ easing: quadIn, duration: 300, y: -400 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
-      {letterFromNumber(previewNumber)} {previewNumber}
+      <span style="background-color: {letterToColor[letterFromNumber(previewNumber)]}">
+        {letterFromNumber(previewNumber)}
+      </span>
+      <span>
+        {previewNumber}
+      </span>
     </p>
   {/key}
 </div>

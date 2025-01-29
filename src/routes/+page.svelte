@@ -65,12 +65,12 @@
 
 <!--
   +--< outer >---------------------+------+
-  |+-< inner >--------------------+|      |
-  ||                              ||      |
-  ||     ball number display      ||      |
-  ||     (BallDisplay.svelte)     ||   <----- previous balls
-  ||                              ||      |   (BallDisplay.svelte)
-  |+------------------------------+|      |
+  |+-< inner >--------+-----------+|      |
+  ||                  |           ||      |
+  ||                  |           ||      |
+  ||    BallDisplay   | BingoCage ||   <----- previous balls
+  ||                  |           ||      |   (BallDisplay.svelte)
+  |+------------------+-----------+|      |
   ||      progress indicator      ||      |
   |+------------------------------+|      |
   ||  controls (Controls.svelte)  ||      |
@@ -99,7 +99,7 @@
 
   .display {
     align-self: stretch;
-    flex-grow: 8;
+    flex-grow: 3;
     display: flex;
     flex-direction: row;
     column-gap: 20px;
