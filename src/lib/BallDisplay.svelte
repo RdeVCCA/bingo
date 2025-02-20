@@ -94,7 +94,7 @@
         {letterFromNumber(previewNumber)}
       </span>
       <span>
-        {previewNumber === 0 ? "..." : previewNumber === -1 ? "" : previewNumber}
+        {previewNumber === 0 || previewNumber === -1 ? "" : previewNumber}
       </span>
     </p>
     <p class="display" in:fly={{ easing: quadOut, duration: 1900, y: -800 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
@@ -102,7 +102,7 @@
         {letterFromNumber(actualNumber)}
       </span>
       <span>
-        {actualNumber === 0 ? "..." : actualNumber === -1 ? "" : actualNumber}
+        {actualNumber === 0 || actualNumber === -1 ? "" : actualNumber}
       </span>
     </p>
   {/key}
