@@ -38,6 +38,11 @@
 
   .outer {
     border: 2px solid black;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(16, 1fr);
+    height: 100%;
+    aspect-ratio: 5/16;
   }
 
   .first-row {
@@ -55,7 +60,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.5s;
+    transition: background-color 2.0s, color 2.0s;
+  }
+
+  .outer > div:not(.first-row) {
+    color: transparent;
+  }
+
+  .outer > div:not(.first-row).filled {
+    color: black;
   }
 
   div:nth-child(5n+2).filled {
@@ -76,14 +89,6 @@
 
   div:nth-child(5n+1).filled {
     background-color: #c7ceea;
-  }
-
-  .outer {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(16, 1fr);
-    height: 100%;
-    aspect-ratio: 5/16;
   }
 </style>
 
@@ -108,9 +113,8 @@
     <!-- 15 rows -->
     {#each Array(5).fill() as _, j}
       <!-- 5 columns -->
-        <!-- HACK: not sure why the table columns are shrinking so fill empty cells with &emsp to pad them up -->
         <div class={unpicked.includes(j * 15 + i + 1) ? "" : "filled"}>
-          {@html unpicked.includes(j * 15 + i + 1) ? "&emsp;" : j * 15 + i + 1}
+          {j * 15 + i + 1}
         </div>
     {/each}
   {/each}

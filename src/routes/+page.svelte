@@ -7,15 +7,27 @@
     BingoCage,
   } from "$lib/index.js";
 
+  let bingoCage; // the BingoCage element will bind to this
+  let soundEffect = new Audio("/soundEffect.mp3");
+  soundEffect.loop = true;
+
+  let appState = {
+    unpicked: Array(75).fill().map((_, i) => i + 1),
+    previewNumber: 0,
+    actualNumber: -1,
+    previewIntervalId: 0, // the previewNumbers are generated using a setInterval, this ensures we can stop the interval
+  };
+  
   /**
     * Returns a new ball. This function WILL NOT modify the `unpicked` array.
     * If specified, the function will ensure the new ball is not the same as `prevPicked`.
     */
   function previewNewBall(unpicked, prevPicked) {
     let newBallIndex = Math.floor(Math.random() * unpicked.length);
-    if (prevPicked) {
-      while (unpicked.length > 1 && unpicked[newBallIndex] === prevPicked) {
-        newBallIndex = Math.floor(Math.random() * unpicked.length);
+    if (unpicked.length > 1 && unpicked[newBallIndex] === prevPicked) {
+      newBallIndex += 1;
+      if (newBallIndex >= unpicked.length) {
+        newBallIndex -= 2;
       }
     }
     return unpicked[newBallIndex];
@@ -28,37 +40,34 @@
     return newBall;
   }
 
-  // generate array with numbers from 1-75
-  let unpicked = $state(Array(75).fill().map((_, i) => i + 1));
-  // the bingo cage svg binds to this variable
-  let bingoCage;
-
-  let previewNumber = $state(1);
-  let previewIntervalId;
-  let soundEffect = new Audio("/soundEffect.mp3");
-  soundEffect.loop = true;
   function onPlay() {
-    if (unpicked.length === 0) { return; }
+    if (appState.unpicked.length === 0) { return; }
     soundEffect.play();
 
-    previewNumber = previewNewBall(unpicked, previewNumber);
-    previewIntervalId = setInterval(function () {
-      previewNumber = previewNewBall(unpicked, previewNumber);
+    appState.actualNumber = -1;
+    appState.previewNumber = previewNewBall(appState.unpicked, appState.previewNumber);
+    appState.previewIntervalId = setInterval(function () {
+      appState.previewNumber = previewNewBall(appState.unpicked, appState.previewNumber);
     }, 300);
   }
 
   function onPause() {
-    if (unpicked.length === 0) { return; }
+    if (appState.unpicked.length === 0) { return; }
+
     soundEffect.pause();
     soundEffect.currentTime = 0;
-    clearInterval(previewIntervalId);
-    previewNumber = pickNewBall(unpicked);
+
+    clearInterval(appState.previewIntervalId);
+
+    appState.previewNumber = -1;
+    appState.actualNumber = pickNewBall(appState.unpicked);
     bingoCage.removeBall();
   }
 
   function onNewRound() {
-    unpicked = Array(75).fill().map((_, i) => i + 1);
-    previewNumber = 1;
+    appState.unpicked = Array(75).fill().map((_, i) => i + 1);
+    appState.previewNumber = 0;
+    appState.actualNumber = -1;
     bingoCage.resetBalls();
   }
 </script>
@@ -110,12 +119,12 @@
 <div class="outer">
   <div class="inner">
     <div class="display">
-      <BallDisplay {previewNumber} />
+      <BallDisplay previewNumber={appState.previewNumber} actualNumber={appState.actualNumber} />
       <BingoCage bind:this={bingoCage} />
     </div>
-    <RoundProgress rounds={75 - unpicked.length} />
-    <Controls {onPlay} {onPause} {onNewRound} roundEnded={unpicked.length === 0}/>
+    <RoundProgress rounds={75 - appState.unpicked.length} />
+    <Controls {onPlay} {onPause} {onNewRound} roundEnded={appState.unpicked.length === 0}/>
   </div>
-  <BallHistory {unpicked} />
+  <BallHistory unpicked={appState.unpicked} />
 </div>
 

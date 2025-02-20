@@ -2,7 +2,7 @@
   import { BingoCage } from "$lib/index.js";
   import { fly } from "$lib/transition.js";
   import { quadIn, quadOut } from "svelte/easing";
-  let { previewNumber } = $props();
+  let { previewNumber, actualNumber } = $props();
 
   function letterFromNumber(number) {
     if (number >= 1 && number <= 15) {
@@ -15,8 +15,10 @@
       return "G";
     } else if (number >= 61 && number <= 75) {
       return "O";
+    } else if (number === 0 || number === -1) {
+      return "";
     } else {
-      console.error(`letterFromNumber: number ${number} is not in the range 1-75`);
+      console.error(`letterFromNumber: number ${number} is not in the range -1-75`);
     }
   }
 
@@ -77,7 +79,7 @@
     z-index: -5; /* make sure the rolling numbers don't draw on top of any UI */
     margin: 0;
     display: inline-block;
-    font-size: 15vw; /* vw to make it big and scale responsively */
+    font-size: 20vw; /* vw to make it big and scale responsively */
   }
 
   span {
@@ -92,7 +94,15 @@
         {letterFromNumber(previewNumber)}
       </span>
       <span>
-        {previewNumber}
+        {previewNumber === 0 ? "..." : previewNumber === -1 ? "" : previewNumber}
+      </span>
+    </p>
+    <p class="display" in:fly={{ easing: quadOut, duration: 1900, y: -800 }} out:fly={{ easing: quadOut, duration: 300, y: 400 }}>
+      <span style="background-color: {letterToColor[letterFromNumber(actualNumber)]}">
+        {letterFromNumber(actualNumber)}
+      </span>
+      <span>
+        {actualNumber === 0 ? "..." : actualNumber === -1 ? "" : actualNumber}
       </span>
     </p>
   {/key}
